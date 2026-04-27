@@ -81,6 +81,7 @@ parse_build_config() {
 
   local in_include=0
   local board="" shield="" snippet="" cmake_args="" artifact_name=""
+  local last_field=""
 
   while IFS= read -r line; do
     # Skip comments and empty lines
@@ -111,14 +112,25 @@ parse_build_config() {
         snippet=""
         cmake_args=""
         artifact_name=""
+        last_field=""
       elif [[ "$line" =~ ^[[:space:]]+shield:[[:space:]]*(.+) ]]; then
         shield="$(strip_comment "${BASH_REMATCH[1]}")"
+        last_field="shield"
       elif [[ "$line" =~ ^[[:space:]]+snippet:[[:space:]]*(.+) ]]; then
         snippet="$(strip_comment "${BASH_REMATCH[1]}")"
+        last_field="snippet"
       elif [[ "$line" =~ ^[[:space:]]+cmake-args:[[:space:]]*(.+) ]]; then
         cmake_args="$(strip_comment "${BASH_REMATCH[1]}")"
+        last_field="cmake_args"
       elif [[ "$line" =~ ^[[:space:]]+artifact-name:[[:space:]]*(.+) ]]; then
         artifact_name="$(strip_comment "${BASH_REMATCH[1]}")"
+        last_field="artifact_name"
+      elif [[ "$line" =~ ^[[:space:]]{6,}([^[:space:]].+) ]]; then
+        # Multi-line continuation: deeper indentation
+        local continuation="${BASH_REMATCH[1]}"
+        if [[ ! "$line" =~ ^[[:space:]]+[a-z-]+:[[:space:]] ]] && [ "$last_field" = "cmake_args" ]; then
+          cmake_args="$cmake_args $(strip_comment "$continuation")"
+        fi
       fi
     fi
   done <"$BUILD_CONFIG"
