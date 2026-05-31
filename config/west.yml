@@ -14,18 +14,23 @@ manifest:
     - name: zmk
       remote: zmkfirmware
       revision: main
+      path: deps/zmk
       import: app/west.yml
     - name: zmk-dongle-display
       remote: englmaxi
       revision: main
+      path: deps/zmk-dongle-display
     - name: nice-view-gem
       remote: M165437
       revision: main
+      path: deps/nice-view-gem
     - name: zmk-nice-oled
       remote: mctechnology17
       revision: main
+      path: deps/zmk-nice-oled
     - name: hammerbeam-slideshow
       remote: gpeye
       revision: main
+      path: deps/hammerbeam-slideshow
   self:
     path: config

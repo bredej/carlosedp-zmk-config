@@ -147,7 +147,7 @@ parse_build_config() {
   fi
 }
 
-# Parse west.yml and extract project names (these become directories)
+# Parse west.yml and extract project paths (uses 'path:' if set, otherwise 'name:')
 parse_west_projects() {
   local west_file="${1:-config/west.yml}"
 
@@ -157,6 +157,15 @@ parse_west_projects() {
   fi
 
   local in_projects=0
+  local current_name="" current_path=""
+
+  flush_project() {
+    if [ -n "$current_name" ]; then
+      echo "${current_path:-$current_name}"
+    fi
+    current_name=""
+    current_path=""
+  }
 
   while IFS= read -r line; do
     # Skip comments and empty lines
@@ -171,18 +180,45 @@ parse_west_projects() {
 
     # Exit projects section when we hit another top-level key
     if [ $in_projects -eq 1 ] && [[ "$line" =~ ^[[:space:]]*[a-z]+:[[:space:]]*$ ]] && [[ ! "$line" =~ ^[[:space:]]*- ]]; then
+      flush_project
       break
     fi
 
     if [ $in_projects -eq 1 ]; then
-      # Extract project name
       if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+name:[[:space:]]*(.+) ]]; then
-        echo "${BASH_REMATCH[1]}"
-      elif [[ "$line" =~ ^[[:space:]]+name:[[:space:]]*(.+) ]]; then
-        echo "${BASH_REMATCH[1]}"
+        flush_project
+        current_name="${BASH_REMATCH[1]}"
+      elif [[ "$line" =~ ^[[:space:]]+name:[[:space:]]*(.+) ]] && [ -z "$current_name" ]; then
+        current_name="${BASH_REMATCH[1]}"
+      elif [[ "$line" =~ ^[[:space:]]+path:[[:space:]]*(.+) ]]; then
+        current_path="${BASH_REMATCH[1]}"
       fi
     fi
   done <"$west_file"
+  flush_project
+}
+
+# Get the local path of the zmk project from west.yml
+west_zmk_path() {
+  local west_file="config/west.yml"
+  local in_zmk=0 zmk_path="zmk"
+  while IFS= read -r line; do
+    [[ "$line" =~ ^[[:space:]]*# ]] && continue
+    [[ -z "${line// /}" ]] && continue
+    if [[ "$line" =~ ^[[:space:]]*-[[:space:]]+name:[[:space:]]*zmk[[:space:]]*$ ]]; then
+      in_zmk=1
+      continue
+    fi
+    if [ $in_zmk -eq 1 ]; then
+      if [[ "$line" =~ ^[[:space:]]+path:[[:space:]]*(.+) ]]; then
+        zmk_path="${BASH_REMATCH[1]}"
+        break
+      fi
+      # New project entry — zmk has no path override
+      [[ "$line" =~ ^[[:space:]]*-[[:space:]]+name: ]] && break
+    fi
+  done <"$west_file"
+  echo "$zmk_path"
 }
 
 # Check if Docker image is available locally, pull if needed
@@ -224,7 +260,9 @@ build_target() {
       fi
 
       build_args+=("-b" "$board")
-      build_args+=("-s" "/zmk/zmk/app")
+      local zmk_app_path
+      zmk_app_path=$(west_zmk_path)
+      build_args+=("-s" "/zmk/${zmk_app_path}/app")
 
       # Add snippet if specified
       if [ -n "$snippet" ]; then
@@ -337,8 +375,8 @@ check_init() {
   fi
 
   # Check if main zmk project exists
-  if [ ! -d "./zmk" ]; then
-    log_warning "ZMK firmware not found (zmk/ not found)"
+  if [ ! -d "./deps/zmk" ] && [ ! -d "./zmk" ]; then
+    log_warning "ZMK firmware not found (deps/zmk/ not found)"
     needs_init=1
   fi
 
