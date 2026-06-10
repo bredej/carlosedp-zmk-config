@@ -320,9 +320,9 @@ build_target() {
       fi
 
       # Execute build
-      $COMMAND west build "${build_args[@]}" -- "${cmake_args_array[@]}"
+      $COMMAND west build "${build_args[@]}" -- "${cmake_args_array[@]}" || return 1
 
-      check_build_artifact "./build/${artifact_name}/zephyr/zmk.uf2" "${artifact_name} build"
+      check_build_artifact "./build/${artifact_name}/zephyr/zmk.uf2" "${artifact_name} build" || return 1
 
       local end_time
       end_time=$(date +%s)
@@ -375,8 +375,8 @@ check_init() {
   fi
 
   # Check if main zmk project exists
-  if [ ! -d "./deps/zmk" ] && [ ! -d "./zmk" ]; then
-    log_warning "ZMK firmware not found (deps/zmk/ not found)"
+  if [ ! -d "./zmk" ] && [ ! -d "./zmk" ]; then
+    log_warning "ZMK firmware not found (zmk/ not found)"
     needs_init=1
   fi
 
@@ -418,13 +418,15 @@ check_build_artifact() {
 }
 
 build() {
-  local failed=0
   local start_time
   start_time=$(date +%s)
 
   # Build all targets from YAML config
   while IFS='|' read -r board shield snippet cmake_args artifact_name; do
-    build_target "$artifact_name" || failed=$((failed + 1))
+    build_target "$artifact_name" || {
+      log_error "Build failed for '${artifact_name}'. Stopping."
+      exit 1
+    }
   done < <(parse_build_config)
 
   local end_time
@@ -432,16 +434,9 @@ build() {
   local duration=$((end_time - start_time))
 
   echo ""
-  if [ $failed -eq 0 ]; then
-    log_info "========================================"
-    log_success "All builds completed successfully in ${duration}s!"
-    log_info "========================================"
-  else
-    log_error "========================================"
-    log_error "Build completed with $failed failure(s) in ${duration}s"
-    log_error "========================================"
-    exit 1
-  fi
+  log_info "========================================"
+  log_success "All builds completed successfully in ${duration}s!"
+  log_info "========================================"
 }
 
 # List all available build targets from YAML
