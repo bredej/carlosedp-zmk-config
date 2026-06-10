@@ -71,8 +71,6 @@
             bindings = <&snap_win>, <&snap_mac_clip>;
         };
     };
-// To use HRM replace the home row with:
-// &kp TAB    &hml LCTRL A  &hml LALT S  &hml LGUI D  &hml LSHFT F &kp G               &kp H      &hmr RSHFT J &hmr RGUI K    &hmr LALT L   &hmr RCTRL SEMI &kp APOS
 
     chosen {
         zmk,kscan = &kscan0;
