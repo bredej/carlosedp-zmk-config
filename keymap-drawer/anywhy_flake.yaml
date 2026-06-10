@@ -38,15 +38,15 @@ layers:
   - {t: /, s: '?'}
   - $$mdi:apple-keyboard-shift$$
   - $$mdi:apple-keyboard-control$$
-  - LGUI
-  - $$mdi:apple-keyboard-option$$
+  - '&sl_ga'
+  - '&sl_ag'
   - num
   - {t: '$$mdi:backspace$$', type: backspace}
   - $$mdi:keyboard-space$$
   - {t: '$$mdi:keyboard-return$$', type: enter}
   - utils
   - $$mdi:apple-keyboard-option$$
-  - '&snap_win'
+  - '&sl_s'
   num:
   - {t: '`', s: '~'}
   - {t: '1', s: '!'}
@@ -95,7 +95,7 @@ layers:
   - {t: '$$mdi:transfer$$', type: trans}
   - {t: '$$mdi:transfer$$', type: trans}
   utils:
-  - {t: '$$mdi:minus-circle-outline$$', type: none}
+  - '&swl ZMK_SWITCH_LAYOUT_NEXT'
   - F1
   - F2
   - F3

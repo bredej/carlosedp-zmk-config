@@ -604,11 +604,11 @@ path.combo {
 </g>
 <g transform="translate(280, 280)" class="key keypos-37">
 <rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
-<text x="0" y="0" class="key tap">LGUI</text>
+<text x="0" y="0" class="key tap"><tspan style="font-size: 83%">&amp;sl_ga</tspan></text>
 </g>
 <g transform="translate(360, 300)" class="key keypos-38">
 <rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
-<use href="#mdi:apple-keyboard-option" xlink:href="#mdi:apple-keyboard-option" x="-11" y="-11" height="22" width="22.0" class="key tap glyph mdi:apple-keyboard-option"/>
+<text x="0" y="0" class="key tap"><tspan style="font-size: 83%">&amp;sl_ag</tspan></text>
 </g>
 <g transform="translate(449, 312) rotate(15.0)" class="key keypos-39">
 <rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
@@ -638,7 +638,7 @@ path.combo {
 </g>
 <g transform="translate(1080, 300)" class="key keypos-45">
 <rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
-<text x="0" y="0" class="key tap"><tspan style="font-size: 62%">&amp;snap_w…</tspan></text>
+<text x="0" y="0" class="key tap">&amp;sl_s</text>
 </g>
 </g>
 </g>
@@ -848,9 +848,11 @@ path.combo {
 <g transform="translate(0, 806)" class="layer-utils">
 <text x="0" y="0" class="label" id="utils">utils</text>
 <g transform="translate(0, 0)">
-<g transform="translate(40, 100)" class="key none keypos-0">
-<rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key none"/>
-<use href="#mdi:minus-circle-outline" xlink:href="#mdi:minus-circle-outline" x="-11" y="-11" height="22" width="22.0" class="key none tap glyph mdi:minus-circle-outline"/>
+<g transform="translate(40, 100)" class="key keypos-0">
+<rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
+<text x="0" y="0" class="key tap">
+<tspan x="0" dy="-0.5em" style="font-size: 62%">&amp;swl</tspan><tspan x="0" dy="1.0em" style="font-size: 62%">ZMK_SWI…</tspan>
+</text>
 </g>
 <g transform="translate(120, 100)" class="key keypos-1">
 <rect rx="4" ry="4" x="-38" y="-38" width="77" height="77" class="key"/>
